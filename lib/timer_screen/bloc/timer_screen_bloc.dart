@@ -12,9 +12,11 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   TimerBloc({
     required Ticker ticker,
     required TimerRepository repository,
+    required int duration,
   })  : _ticker = ticker,
         _repository = repository,
-        super(const TimerInitial(_duration, 0)) {
+        //
+        super(TimerInitial(duration, 0)) {
     on<TimerStarted>(_onStarted);
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
@@ -24,9 +26,9 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   final TimerRepository _repository;
   final Ticker _ticker;
-  static const int _duration = 60;
+  final int _duration = 10; //how to assign _repository.time[0];
   final int iterationNumber =
-      14; //TODO replace 14 on = _repository.timeList.length;
+      3; //TODO replace 2 on = _repository.timeList.length;
   int iterationCounter = 0;
   StreamSubscription<int>? _tickerSubscription;
 
@@ -36,15 +38,18 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     return super.close();
   }
 
+  void _runTicker(int duration, int actionStatus) {
+    _tickerSubscription?.cancel();
+    _tickerSubscription =
+        _ticker.tick(ticks: duration).listen((duration) => add(_TimerTicked(
+              duration: duration,
+              actionStatus: actionStatus,
+            )));
+  }
+
   void _onStarted(TimerStarted event, Emitter<TimerState> emit) {
     emit(TimerRunInProgress(event.duration, event.actionStatus));
-    _tickerSubscription?.cancel();
-    _tickerSubscription = _ticker
-        .tick(ticks: event.duration)
-        .listen((duration) => add(_TimerTicked(
-              duration: duration,
-              actionStatus: event.actionStatus,
-            )));
+    _runTicker(event.duration, event.actionStatus);
   }
 
   void _onPaused(TimerPaused event, Emitter<TimerState> emit) {
@@ -63,19 +68,22 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   void _onReset(TimerReset event, Emitter<TimerState> emit) {
     _tickerSubscription?.cancel();
-    emit(const TimerInitial(_duration, 0));
+    emit(TimerInitial(_duration, 0));
+    iterationCounter = 0;
   }
 
   void _onTicked(_TimerTicked event, Emitter<TimerState> emit) {
-    if (iterationCounter <= iterationNumber) {
-      if (event.duration > 0) {
-        emit(TimerRunInProgress(event.duration, event.actionStatus));
-      } else {
-        ++iterationCounter;
-        emit(TimerInitial(_repository.time[iterationCounter], iterationCounter));
-      }
+    if (event.duration >= 0) {
+      emit(TimerRunInProgress(event.duration, event.actionStatus));
     } else {
-      emit(const TimerRunComplete());
+      ++iterationCounter;
+      if (iterationCounter < iterationNumber) {
+        emit(TimerRunInProgress(
+            _repository.time[iterationCounter], iterationCounter));
+        _runTicker(_repository.time[iterationCounter], iterationCounter);
+      } else {
+        emit(const TimerRunComplete());
+      }
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:timer_app/data/timer_data_model.dart';
 
 class TimerRepository {
+  TimerRepository();
   final TimerData timerData = const TimerData(
     preparing: 10,
     work: 20,
@@ -46,4 +47,6 @@ class TimerRepository {
       timeList.add(timerData.rest);
     }
   }
+
+
 }
