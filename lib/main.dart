@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:timer_app/timer_screen/view/timer_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:timer_app/timer_screen/cubit/main_page_cubit.dart';
 
-void main() {
+import 'data/timer_data_local_db_controller.dart';
+import 'data/timer_repository.dart';
+
+void main() async {
+  await Hive.initFlutter();
   runApp(const MyApp());
 }
 
@@ -11,14 +17,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      //title: 'Timer',/
-      theme: ThemeData(
-
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return RepositoryProvider(
+      create: (BuildContext context) => TimerRepository(dbController: LocalDbController()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<MainPageCubit>(
+            create: (BuildContext context) => MainPageCubit(
+              timerRepository: context.read(), //need TimerRepository()
+            ),
+          )
+        ],
+        child: MaterialApp(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          home: const MyHomePage(title: 'timer',),
+        ),
       ),
-      home: const MyHomePage(title: 'timer',), //MyHomePage(title: 'Timer'),
     );
   }
 }

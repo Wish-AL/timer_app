@@ -1,29 +1,70 @@
-import 'package:equatable/equatable.dart';
+//import 'package:equatable/equatable.dart';
 
-class TimerData extends Equatable {
-  final int preparing;
-  final int work;
-  final int timeOut;
-  final int cycles;
-  final int sets;
-  final int rest;
+class TimerDataModel {
 
-  const TimerData({
-    required this.preparing,
-    required this.work,
-    required this.timeOut,
-    required this.cycles,
-    required this.sets,
-    required this.rest,
+  int? id;
+  int? preparing;
+  int? work;
+  int? rest;
+  int? cycles;
+  int? sets;
+  int? calmDown;
+  String? workDescription;
+  String? restDescription;
+  String? workName;
+  String? restName;
+  String? workTune;
+  String? restTune;
+  String? name;
+  String? level;
+  String? type;
+  int? totalTime;
+  String? image;
+  DateTime? timeForWork;
+  bool? notification;
+
+  TimerDataModel({
+    this.id,
+    this.preparing,
+    this.work,
+    this.rest,
+    this.cycles,
+    this.sets,
+    this.calmDown,
+    this.workDescription,
+    this.restDescription,
+    this.workName,
+    this.restName,
+    this.workTune,
+    this.restTune,
+    this.name,
+    this.level,
+    this.type,
+    this.totalTime,
+    this.image,
+    this.notification,
   });
 
-  @override
-  List<Object?> get props => [
-        preparing,
-        work,
-        timeOut,
-        cycles,
-        sets,
-        rest,
-      ];
+  // @override
+  // List<Object?> get props => [
+  //       id,
+  //       preparing,
+  //       work,
+  //       timeOut,
+  //       cycles,
+  //       sets,
+  //       rest,
+  //       workDescription,
+  //       timeOutDescription,
+  //       workName,
+  //       timeOutName,
+  //       workTune,
+  //       timeOutTune,
+  //       name,
+  //       level,
+  //       type,
+  //       totalTime,
+  //       image,
+  //       notification,
+  //   ];
 }

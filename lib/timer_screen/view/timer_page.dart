@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/timer_data_local_db_controller.dart';
 import '../../data/timer_repository.dart';
 import '../bloc/timer_screen_bloc.dart';
 import '../timer_element.dart';
@@ -12,7 +13,7 @@ class TimerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      create: (BuildContext context) => TimerRepository(),
+      create: (BuildContext context) => TimerRepository(dbController: LocalDbController()),
       child: MultiBlocProvider(
         providers: [
           BlocProvider<TimerBloc>(
