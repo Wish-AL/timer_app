@@ -49,7 +49,7 @@ class TimetableCubit extends Cubit<TimetableState> {
     ));
   }
 
-  Future<void> putTimertableData(TimerData data) async {
+  Future<void> putTimetableData(TimerData data) async {
     _repository.timetableDataToDB(data);
   }
 

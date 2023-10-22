@@ -5,6 +5,11 @@ import 'package:timer_app/data/timer_data_model.dart';
 class TimerRepository {
   TimerRepository({required LocalDbController dbController})
       : _dbController = dbController;
+
+  final bool isAuthorised = false;
+  final bool isSubscribed = false;
+  final List<String> defaultSortList = ['All', 'Saved'];
+
   final TimerDataModel timerData = TimerDataModel(
     preparing: 10,
     work: 20,

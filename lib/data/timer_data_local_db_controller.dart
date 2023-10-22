@@ -44,6 +44,47 @@ class LocalDbController {
     );
   }
 
+  Future<List<TimerData>> getListWithTimetables(int limit, int offset) async {
+    final timetables = await isarTimerData.tmerDatas
+        .where()
+        .offset(offset)
+        .limit(limit)
+        .findAll();
+    return timetables.toList();
+  }
+
+  Future<List<TimerData>> getAssortedListWithTimetables(
+    String level,
+    int lowTimeValue,
+    int maxTimeValue,
+    String type,
+    int limit,
+    int offset,
+  ) async {
+    final timetables = await isarTimerData.tmerDatas
+        .filter()
+        .levelContains(level)
+        .and()
+        .typeContains(type)
+        .and()
+        .totalTimeBetween(lowTimeValue, maxTimeValue)
+        .offset(offset)
+        .limit(limit)
+        .findAll();
+    return timetables.toList();
+  }
+
+  Future<List<TimerData>> getListWithTimetablesTypes(
+      String type, int limit, int offset) async {
+    final timetables = await isarTimerData.tmerDatas
+        .where()
+        .typeContains(type)
+        .offset(offset)
+        .limit(limit)
+        .findAll();
+    return timetables.toList();
+  }
+
   Future<TimerData> getTimetable(int id) async {
     return await isarTimerData.timerDatas.get(id);
   }

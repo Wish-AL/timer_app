@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:timer_app/timer_screen/cubit/main_page_cubit.dart';
+import 'package:timer_app/main_page/cubit/main_page_cubit.dart';
+import 'package:timer_app/timer_page/view/timer_page.dart';
+import 'package:timer_app/timetable/view/editing_screen.dart';
+import 'package:timer_app/timetable/view/timetable_screen.dart';
 
 import 'data/timer_data_local_db_controller.dart';
 import 'data/timer_repository.dart';
+import 'main_page/view/main_screen.dart';
 
 void main() async {
-  await Hive.initFlutter();
+  //await Hive.initFlutter();
   runApp(const MyApp());
 }
 
@@ -33,7 +37,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: const MyHomePage(title: 'timer',),
+          home: const TimerPage(),
         ),
       ),
     );

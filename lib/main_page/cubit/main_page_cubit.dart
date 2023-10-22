@@ -12,4 +12,5 @@ class MainPageCubit extends Cubit<MainPageState> {
         super(const MainPageState());
 
   final TimerRepository _repository;
+
 }

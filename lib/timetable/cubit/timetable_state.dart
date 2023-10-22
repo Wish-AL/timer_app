@@ -46,6 +46,7 @@ class TimetableState extends Equatable {
   final DateTime? timeForWork;
   final bool? notification;
 
+
   TimetableState copyWith({
     int? preparing,
     int? work,
