@@ -20,11 +20,14 @@ class TimerPage extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<TimerBloc>(
-            create: (BuildContext context) => TimerBloc(
-              ticker: const Ticker(),
-              repository: context.read(), //need TimerRepository()
-              duration: RepositoryProvider.of<TimerRepository>(context).time[0],
-            ),
+            create: (BuildContext context) =>
+                TimerBloc(
+                  ticker: const Ticker(),
+                  repository: context.read(), //need TimerRepository()
+                  duration: RepositoryProvider
+                      .of<TimerRepository>(context)
+                      .time[0],
+                ),
           )
         ],
         child: MaterialApp(
@@ -47,7 +50,7 @@ class Timer extends StatelessWidget {
   Widget build(BuildContext context) {
     final duration = context.select((TimerBloc bloc) => bloc.state.duration);
     final activity =
-        context.select((TimerBloc bloc) => bloc.state.actionStatus);
+    context.select((TimerBloc bloc) => bloc.state.actionStatus);
     final dataBloc = BlocProvider.of<TimerBloc>(context);
     final repository = RepositoryProvider.of<TimerRepository>(context);
     final _scrollDirection = Axis.horizontal;
@@ -81,6 +84,7 @@ class Timer extends StatelessWidget {
           )),
       body: Stack(
         children: <Widget>[
+          Background(),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -115,19 +119,19 @@ class Timer extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       final textStyle = index == activity
                           ? const TextStyle(
-                              color: Color(0xFF191E44),
-                              fontSize: 43,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w500,
-                              height: 1,
-                            )
+                        color: Color(0xFF191E44),
+                        fontSize: 43,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 1,
+                      )
                           : const TextStyle(
-                              color: Color(0xFFB2B2B2),
-                              fontSize: 22,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w500,
-                              height: 1,
-                            );
+                        color: Color(0xFFB2B2B2),
+                        fontSize: 22,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
+                        height: 1,
+                      );
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         child: Align(
@@ -197,10 +201,7 @@ class Timer extends StatelessWidget {
 class Background extends StatefulWidget {
   const Background({
     super.key,
-    required this.bloc,
   });
-
-  final TimerBloc bloc;
 
   @override
   State<Background> createState() => _BackgroundState();
@@ -210,34 +211,32 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: Duration(seconds: duration),
     vsync: this,
-  )..stop(canceled: false);
-  bool isAnimating = true;
+  )
+    ..stop(canceled: false);
+
   late int duration;
   late int action;
 
   @override
-  void initState() {
-    super.initState();
-    duration = widget.bloc.state.duration;
-    action = widget.bloc.state.actionStatus;
-
-    widget.bloc.stream.listen((state) {
+  void didChangeDependencies() {
+    duration = BlocProvider.of<TimerBloc>(context).state.duration;
+    action = BlocProvider.of<TimerBloc>(context).state.actionStatus;
+    BlocProvider.of<TimerBloc>(context).stream.listen((state) {
       if (state is TimerRunPause ||
           state is TimerRunComplete ||
           state is TimerInitial) {
         _controller.stop(canceled: false);
-        isAnimating = false;
       } else if (state is TimerRunInProgress) {
         _controller.forward();
-        isAnimating = true;
       }
       if (state.actionStatus != action) {
-        duration = widget.bloc.state.duration;
-        action = widget.bloc.state.actionStatus;
+        duration = BlocProvider.of<TimerBloc>(context).state.duration;
+        action = BlocProvider.of<TimerBloc>(context).state.actionStatus;
         _controller.reset(); //controller did not change duration
         setState(() {});
       }
     });
+    super.didChangeDependencies();
   }
 
   @override
@@ -272,7 +271,10 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
               child: Lottie.asset(
                 'assets/animation_lnkfhuit.json',
                 height: 700,
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 fit: BoxFit.fill,
               ),
             ),
@@ -292,32 +294,40 @@ class TimerControlButton extends StatelessWidget {
       buildWhen: (prev, state) => prev.runtimeType != state.runtimeType,
       builder: (context, state) {
         return switch (state) {
-          TimerInitial() => TimerButton(
-              name: 'Start',
-              onPressed: () => context.read<TimerBloc>().add(
-                    TimerStarted(
-                        duration: state.duration,
-                        actionStatus: state.actionStatus),
-                  ),
-            ),
-          TimerRunInProgress() => TimerButton(
-              name: 'Stop/Pause',
-              onPressed: () => context.read<TimerBloc>().add(
-                    const TimerPaused(),
-                  ),
-            ),
-          TimerRunPause() => TimerButton(
-              name: 'Run',
-              onPressed: () => context.read<TimerBloc>().add(
-                    const TimerResumed(),
-                  ),
-            ),
-          TimerRunComplete() => TimerButton(
-              name: 'Start',
-              onPressed: () => context.read<TimerBloc>().add(
-                    const TimerReset(),
-                  ),
-            ),
+          TimerInitial() =>
+              TimerButton(
+                name: 'Start',
+                onPressed: () =>
+                    context.read<TimerBloc>().add(
+                      TimerStarted(
+                          duration: state.duration,
+                          actionStatus: state.actionStatus),
+                    ),
+              ),
+          TimerRunInProgress() =>
+              TimerButton(
+                name: 'Stop/Pause',
+                onPressed: () =>
+                    context.read<TimerBloc>().add(
+                      const TimerPaused(),
+                    ),
+              ),
+          TimerRunPause() =>
+              TimerButton(
+                name: 'Run',
+                onPressed: () =>
+                    context.read<TimerBloc>().add(
+                      const TimerResumed(),
+                    ),
+              ),
+          TimerRunComplete() =>
+              TimerButton(
+                name: 'Start',
+                onPressed: () =>
+                    context.read<TimerBloc>().add(
+                      const TimerReset(),
+                    ),
+              ),
         };
       },
     );
