@@ -232,7 +232,8 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
       if (state.actionStatus != action) {
         duration = BlocProvider.of<TimerBloc>(context).state.duration;
         action = BlocProvider.of<TimerBloc>(context).state.actionStatus;
-        _controller.reset(); //controller did not change duration
+        _controller.reset();
+        _controller.duration = Duration(seconds: duration);
         setState(() {});
       }
     });
