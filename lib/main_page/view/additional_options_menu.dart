@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../timetable/view/timetable_screen.dart';
+
 enum SampleItem { itemOne, itemTwo, itemThree, itemFour }
 
 class AdditionalOptionsMenu extends StatefulWidget {
@@ -75,6 +77,13 @@ class _AdditionalOptionsMenuState extends State<AdditionalOptionsMenu> {
         ),
         PopupMenuItem<SampleItem>(
           value: SampleItem.itemTwo,
+          onTap: (){
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const TimetablePageManagement(),
+              ),
+            );
+          },
           child: Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(

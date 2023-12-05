@@ -207,7 +207,7 @@ class TimetableScreen extends StatelessWidget {
                     timetableData.setTimerCount();
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const TimerPage(),
+                        builder: (context) => TimerPage(namesOfActivity: timetableData.state.namesOfActivity ?? [''], countdownTimes: timetableData.state.countdownTimes ?? [0],),
                       ),
                     );
                   },
@@ -330,7 +330,7 @@ class TimetableItem extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
-                      isTime ? '00:05:00' : '$value',
+                      isTime ? '${value~/3600}:${(value % 3600) ~/ 60 }:${(value%3600)%60}' : '$value',
                       style: const TextStyle(
                         color: Color(0xFF191E44),
                         fontSize: 34,
@@ -350,3 +350,13 @@ class TimetableItem extends StatelessWidget {
     );
   }
 }
+
+// class TimeDigits extends StatelessWidget {
+//   const TimeDigits({super.key, required this.seconds});
+//   final int seconds;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text('${seconds/3600}:${(seconds % 3600) / 60 }:${(seconds%3600)%60}');
+//   }
+// }
+
