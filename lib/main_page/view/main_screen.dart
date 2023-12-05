@@ -89,7 +89,7 @@ class MainScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 12),
                     clipBehavior: Clip.none,
                     scrollDirection: Axis.horizontal,
-                    itemCount: 5,
+                    itemCount: 1,
                     itemBuilder: (BuildContext context, int index) {
                       return const TypeListItem();
                     }),
@@ -97,7 +97,7 @@ class MainScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: data!.isNotEmpty
+            child: data != null
                 ? ListView.builder(
                     scrollDirection: Axis.vertical,
                     itemCount: data.length,

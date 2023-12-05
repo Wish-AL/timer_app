@@ -27,7 +27,7 @@ class TimetableState extends Equatable {
     this.namesOfActivity,
   });
 
-  final int? preparation; //preparation!!!
+  final int? preparation;
   final int? work;
   final int? rest;
   final int? cycles;

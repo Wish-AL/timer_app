@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:timer_app/data/timer_repository.dart';
 import '../timer_element.dart';
 
 part 'timer_screen_event.dart';
@@ -26,7 +25,6 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
   final List<int> countdownTimes;
   final List<String> namesOfActivity;
   final Ticker _ticker;
-  final int _duration = 10; //how to assign _repository.time[0];
   int iterationCounter = 0;
   StreamSubscription<int>? _tickerSubscription;
 
@@ -66,7 +64,7 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
 
   void _onReset(TimerReset event, Emitter<TimerState> emit) {
     _tickerSubscription?.cancel();
-    emit(TimerInitial(_duration, 0));
+    emit(TimerInitial(countdownTimes[0], 0));
     iterationCounter = 0;
   }
 

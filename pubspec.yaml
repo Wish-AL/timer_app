@@ -60,6 +60,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   isar_generator: ^3.1.0+1
   build_runner: ^2.4.6
+  test: ^1.24.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -114,7 +115,7 @@ flutter:
            weight: 400
      - family: Roboto Condensed
        fonts:
-         - asset: fonts/roboto/RobotoCondensed-Regular.ttf
+         - asset: Fonts/roboto/RobotoCondensed-Regular.ttf
            weight: 500
   #
   # For details regarding fonts from package dependencies,

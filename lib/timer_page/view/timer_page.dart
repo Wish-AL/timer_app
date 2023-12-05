@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:timer_app/timer_page/view/timer_widget.dart';
 import 'package:timer_app/timetable/cubit/timetable_cubit.dart';
@@ -12,32 +13,28 @@ import '../timer_element.dart';
 import 'background_animation.dart';
 
 class TimerPage extends StatelessWidget {
-  const TimerPage({super.key});
+  const TimerPage(
+      {super.key, required this.countdownTimes, required this.namesOfActivity});
+
+  final List<int> countdownTimes;
+  final List<String> namesOfActivity;
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<TimerBloc>(
-            create: (BuildContext context) =>
-                TimerBloc(
-                  ticker: const Ticker(),
-                  countdownTimes: BlocProvider.of<TimetableCubit>(context).state.countdownTimes ?? [0],
-                  namesOfActivity: BlocProvider.of<TimetableCubit>(context).state.namesOfActivity ?? [''],
-                  // duration: RepositoryProvider
-                  //     .of<TimerRepository>(context)
-                  //     .time[0],
-                ),
-          )
-        ],
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
-          home: const Timer(),
+    return BlocProvider<TimerBloc>(
+      create: (BuildContext context) => TimerBloc(
+        ticker: const Ticker(),
+        countdownTimes: countdownTimes ?? [0],
+        namesOfActivity: namesOfActivity ?? [''],
+      ),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
         ),
+        home: Timer(),
+      ),
     );
   }
 }
@@ -50,7 +47,7 @@ class Timer extends StatelessWidget {
     final duration = context.select((TimerBloc bloc) => bloc.state.duration);
     final activity =
         context.select((TimerBloc bloc) => bloc.state.actionStatus);
-    //final dataBloc = BlocProvider.of<TimerBloc>(context);
+    final dataBloc = BlocProvider.of<TimerBloc>(context);
     final repository = RepositoryProvider.of<TimerRepository>(context);
     const scrollDirection = Axis.horizontal;
     final controller = ItemScrollController();
@@ -59,7 +56,6 @@ class Timer extends StatelessWidget {
           border: const Border(bottom: BorderSide.none),
           backgroundColor: const Color(0xFFFEFEFE).withOpacity(1),
           automaticallyImplyLeading: true,
-
           middle: const SizedBox(
             width: double.infinity,
             child: Text(
@@ -116,7 +112,7 @@ class Timer extends StatelessWidget {
                     // clipBehavior: Clip.none,
                     scrollDirection: scrollDirection,
                     itemScrollController: controller,
-                    itemCount: repository.nameOfActivity.length,
+                    itemCount: dataBloc.namesOfActivity.length,
                     itemBuilder: (BuildContext context, int index) {
                       final textStyle = index == activity
                           ? const TextStyle(
@@ -138,7 +134,7 @@ class Timer extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Text(
-                            repository.nameOfActivity[index],
+                            dataBloc.namesOfActivity[index],
                             style: textStyle,
                           ),
                         ),
@@ -148,10 +144,9 @@ class Timer extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 359,
-                height: 144,
-                child: TimerWidget(duration: duration)
-              ),
+                  width: 359,
+                  height: 144,
+                  child: TimerWidget(duration: duration)),
             ],
           ),
         ],
@@ -162,8 +157,6 @@ class Timer extends StatelessWidget {
     );
   }
 }
-
-
 
 class TimerControlButton extends StatelessWidget {
   const TimerControlButton({super.key});
