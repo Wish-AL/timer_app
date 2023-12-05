@@ -219,7 +219,7 @@ void _timerDataSerialize(
   writer.writeString(offsets[4], object.level);
   writer.writeString(offsets[5], object.name);
   writer.writeBool(offsets[6], object.notification);
-  writer.writeLong(offsets[7], object.preparing);
+  writer.writeLong(offsets[7], object.preparation);
   writer.writeLong(offsets[8], object.rest);
   writer.writeLong(offsets[9], object.restBetweenSets);
   writer.writeString(offsets[10], object.restDescription);
@@ -250,7 +250,7 @@ TimerData _timerDataDeserialize(
   object.level = reader.readStringOrNull(offsets[4]);
   object.name = reader.readStringOrNull(offsets[5]);
   object.notification = reader.readBoolOrNull(offsets[6]);
-  object.preparing = reader.readLongOrNull(offsets[7]);
+  object.preparation = reader.readLongOrNull(offsets[7]);
   object.rest = reader.readLongOrNull(offsets[8]);
   object.restBetweenSets = reader.readLongOrNull(offsets[9]);
   object.restDescription = reader.readStringOrNull(offsets[10]);

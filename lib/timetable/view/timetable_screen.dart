@@ -1,26 +1,51 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:timer_app/data/timer_repository.dart';
+
+import '../../timer_page/view/timer_page.dart';
+import '../cubit/timetable_cubit.dart';
+import 'editing_screen.dart';
+
+class TimetablePageManagement extends StatelessWidget {
+  const TimetablePageManagement({super.key, this.id});
+
+  final int? id;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<TimetableCubit>(
+      create: (BuildContext context) => TimetableCubit(
+        id: id,
+        timerRepository: context.read<TimerRepository>(),
+      ),
+      child: const TimetableScreen(),
+    );
+  }
+}
 
 class TimetableScreen extends StatelessWidget {
   const TimetableScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final timetableData = BlocProvider.of<TimetableCubit>(context);
     return Scaffold(
       appBar: CupertinoNavigationBar(
         border: const Border(bottom: BorderSide.none),
         backgroundColor: const Color(0xFFFEFEFE).withOpacity(1),
-        leading: IconButton(
-          //iconSize: 24,
-          icon: const Icon(CupertinoIcons.bars),
-          onPressed: () {},
-        ),
-        middle: const SizedBox(
+        automaticallyImplyLeading: true,
+        // leading: IconButton(
+        //   //iconSize: 24,
+        //   icon: const Icon(CupertinoIcons.bars),
+        //   onPressed: () {},
+        // ),
+        middle: SizedBox(
           width: double.infinity,
           child: Text(
-            'timetable name',
+            timetableData.state.name!,
             textAlign: TextAlign.start,
-            style: TextStyle(
+            style: const TextStyle(
               color: Color(0xFF191E44),
               fontSize: 20,
               fontFamily: 'Roboto',
@@ -112,12 +137,50 @@ class TimetableScreen extends StatelessWidget {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: ListView.builder(
+              child: ListView(
                 scrollDirection: Axis.vertical,
-                itemCount: 7,
-                itemBuilder: (BuildContext context, int index) {
-                  return const TimetableItem();
-                },
+                children: [
+                  TimetableItem(
+                    name: 'Pre-start preparation',
+                    value: timetableData.state.preparation!,
+                    isTime: true,
+                  ),
+                  TimetableItem(
+                    name: timetableData.state.workName!,
+                    value: timetableData.state.work!,
+                    isTime: true,
+                    description: timetableData.state.workDescription,
+                  ),
+                  TimetableItem(
+                    name: timetableData.state.restName!,
+                    value: timetableData.state.rest!,
+                    isTime: true,
+                    description: timetableData.state.restDescription,
+                  ),
+                  TimetableItem(
+                    name: 'Cycles',
+                    value: timetableData.state.cycles!,
+                    isTime: false,
+                    description: 'Work and rest',
+                  ),
+                  TimetableItem(
+                    name: 'Sets',
+                    value: timetableData.state.sets!,
+                    isTime: false,
+                    description: 'Repeat everything',
+                  ),
+                  TimetableItem(
+                    name: 'Rest between sets',
+                    value: timetableData.state.restBetweenSets!,
+                    isTime: true,
+                  ),
+                  TimetableItem(
+                    name: 'Calm down',
+                    value: timetableData.state.calmDown!,
+                    isTime: true,
+                    //description: 'calm down',
+                  ),
+                ],
               ),
             ),
           ),
@@ -140,7 +203,14 @@ class TimetableScreen extends StatelessWidget {
                 child: CupertinoButton(
                   color: const Color(0xFF8089FF),
                   borderRadius: BorderRadius.circular(10),
-                  onPressed: () {},
+                  onPressed: () {
+                    timetableData.setTimerCount();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const TimerPage(),
+                      ),
+                    );
+                  },
                   child: const Text(
                     'START',
                     style: TextStyle(
@@ -163,91 +233,118 @@ class TimetableScreen extends StatelessWidget {
 }
 
 class TimetableItem extends StatelessWidget {
-  const TimetableItem({super.key});
+  const TimetableItem({
+    super.key,
+    required this.name,
+    required this.value,
+    required this.isTime,
+    this.description,
+  });
+
+  final String name;
+  final int value;
+  final String? description;
+  final bool isTime;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Container(
-        width: double.infinity,
-        height: 96,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        decoration: ShapeDecoration(
-          color: const Color(0xFFF7F9FF),
-          shape: RoundedRectangleBorder(
-            side: const BorderSide(width: 1, color: Color(0xFFCCD0FF)),
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          //mainAxisAlignment: MainAxisAlignment.start,
-          //crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              //fit: FlexFit.tight,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: SizedBox(
-                  width: 180,
-                  height: 48,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Time to train',
-                          style: TextStyle(
-                            color: Color(0xFF191919),
-                            fontSize: 16,
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w400,
-                            //height: 1,
-                            letterSpacing: 0.02,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          'Keep the rhythm',
-                          style: TextStyle(
-                            color: Color(0xFF3366FF),
-                            fontSize: 14,
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w400,
-                            //height: 1,
-                            letterSpacing: 0.04,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+      child: GestureDetector(
+        onDoubleTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EditingScreen(
+                name: name,
+                value: value,
+                description: description,
+                isTime: isTime,
               ),
             ),
-            Flexible(
-              child: SizedBox(
-                height: 48,
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          height: 96,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          decoration: ShapeDecoration(
+            color: const Color(0xFFF7F9FF),
+            shape: RoundedRectangleBorder(
+              side: const BorderSide(width: 1, color: Color(0xFFCCD0FF)),
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            //mainAxisAlignment: MainAxisAlignment.start,
+            //crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Flexible(
+                //fit: FlexFit.tight,
                 child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                    '00:05:00',
-                    style: TextStyle(
-                      color: Color(0xFF191E44),
-                      fontSize: 34,
-                      fontFamily: 'Roboto',
-                      fontWeight: FontWeight.w400,
-                      height: 1,
-                      letterSpacing: 0.09,
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    width: 180,
+                    height: 48,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            name,
+                            style: const TextStyle(
+                              color: Color(0xFF191919),
+                              fontSize: 16,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w400,
+                              //height: 1,
+                              letterSpacing: 0.02,
+                            ),
+                          ),
+                        ),
+                        description != null
+                            ? Expanded(
+                                child: Text(
+                                  description!,
+                                  style: const TextStyle(
+                                    color: Color(0xFF3366FF),
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto',
+                                    fontWeight: FontWeight.w400,
+                                    //height: 1,
+                                    letterSpacing: 0.04,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                      ],
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Flexible(
+                child: SizedBox(
+                  height: 48,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      isTime ? '00:05:00' : '$value',
+                      style: const TextStyle(
+                        color: Color(0xFF191E44),
+                        fontSize: 34,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w400,
+                        height: 1,
+                        letterSpacing: 0.09,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -3,7 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class EditingScreen extends StatelessWidget {
-  const EditingScreen({super.key});
+  const EditingScreen({
+    super.key,
+    required this.name,
+    required this.value,
+    required this.isTime,
+    this.description,
+  });
+
+  final String name;
+  final int value;
+  final String? description;
+  final bool isTime;
 
   @override
   Widget build(BuildContext context) {

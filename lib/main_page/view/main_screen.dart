@@ -2,8 +2,11 @@ import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
+import '../../timetable/view/timetable_screen.dart';
+import '../cubit/main_page_cubit.dart';
 import 'additional_options_menu.dart';
 
 class MainScreen extends StatelessWidget {
@@ -11,6 +14,7 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = BlocProvider.of<MainPageCubit>(context).state.mainPageData;
     return Scaffold(
       appBar: CupertinoNavigationBar(
         border: const Border(bottom: BorderSide.none),
@@ -93,13 +97,31 @@ class MainScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              itemCount: 8,
-              itemBuilder: (BuildContext context, int index) {
-                return const TrainingItem();
-              },
-            ),
+            child: data!.isNotEmpty
+                ? ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        child: TrainingItem(
+                          name: data[index].name ?? 'No name',
+                          level: data[index].level ?? 'undefined level',
+                          type: data[index].type ?? 'common',
+                          totalTime: data[index].totalTime ?? 0,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => TimetablePageManagement(
+                                id: data[index].id,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  )
+                : const Text('timer data is empty'),
           ),
         ],
       ),
@@ -140,7 +162,17 @@ class TypeListItem extends StatelessWidget {
 }
 
 class TrainingItem extends StatelessWidget {
-  const TrainingItem({super.key});
+  const TrainingItem(
+      {super.key,
+      required this.name,
+      required this.level,
+      required this.type,
+      required this.totalTime});
+
+  final String name;
+  final String level;
+  final String type;
+  final int totalTime;
 
   @override
   Widget build(BuildContext context) {
@@ -170,12 +202,12 @@ class TrainingItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 225,
                 height: 25,
                 child: Text(
-                  'Self-weight push-ups',
-                  style: TextStyle(
+                  name,
+                  style: const TextStyle(
                     color: Color(0xFF191E44),
                     fontSize: 18,
                     fontFamily: 'Roboto',
@@ -190,9 +222,9 @@ class TrainingItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    'level',
-                    style: TextStyle(
+                  Text(
+                    level,
+                    style: const TextStyle(
                       color: Color(0xFF7F7F7F),
                       fontSize: 14,
                       fontFamily: 'Roboto',
@@ -215,9 +247,9 @@ class TrainingItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Text(
-                    'Type',
-                    style: TextStyle(
+                  Text(
+                    type,
+                    style: const TextStyle(
                       color: Color(0xFF7F7F7F),
                       fontSize: 14,
                       fontFamily: 'Roboto',
@@ -240,9 +272,9 @@ class TrainingItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Text(
-                    '25:20',
-                    style: TextStyle(
+                  Text(
+                    '$totalTime',
+                    style: const TextStyle(
                       color: Color(0xFF7F7F7F),
                       fontSize: 14,
                       fontFamily: 'Roboto',

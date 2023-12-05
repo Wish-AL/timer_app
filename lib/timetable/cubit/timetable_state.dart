@@ -2,13 +2,13 @@ part of 'timetable_cubit.dart';
 
 class TimetableState extends Equatable {
   const TimetableState({
-    this.preparing = 0,
-    this.work = 0,
-    this.rest = 0,
+    this.preparation = 10,
+    this.work = 10,
+    this.rest = 10,
     this.cycles = 1,
     this.sets = 1,
     this.restBetweenSets = 0,
-    this.calmDown = 0,
+    this.calmDown = 5,
     this.workDescription = 'Add description',
     this.restDescription = 'Add description',
     this.workName = 'Work',
@@ -22,9 +22,12 @@ class TimetableState extends Equatable {
     this.image,
     this.dayForWork,
     this.timeForWork,
-    this.notification = false});
+    this.notification = false,
+    this.countdownTimes,
+    this.namesOfActivity,
+  });
 
-  final int? preparing; //preparation!!!
+  final int? preparation; //preparation!!!
   final int? work;
   final int? rest;
   final int? cycles;
@@ -45,6 +48,8 @@ class TimetableState extends Equatable {
   final int? dayForWork;
   final DateTime? timeForWork;
   final bool? notification;
+  final List<int>? countdownTimes;
+  final List<String>? namesOfActivity;
 
 
   TimetableState copyWith({
@@ -69,9 +74,11 @@ class TimetableState extends Equatable {
     int? dayForWork,
     DateTime? timeForWork,
     bool? notification,
+    List<int>? countdownTimes,
+    List<String>? namesOfActivity,
   }) {
     return TimetableState(
-      preparing: preparing ?? this.preparing,
+      preparation: preparing ?? this.preparation,
       work: work ?? this.work,
       rest: rest ?? this.rest,
       cycles: cycles ?? this.cycles,
@@ -92,13 +99,15 @@ class TimetableState extends Equatable {
       dayForWork: dayForWork ?? this.dayForWork,
       timeForWork: timeForWork ?? this.timeForWork,
       notification: notification ?? this.notification,
+      countdownTimes: countdownTimes ?? this.countdownTimes,
+      namesOfActivity: namesOfActivity ?? this.namesOfActivity,
     );
   }
 
   @override
   List<Object?> get props =>
       [
-        preparing,
+        preparation,
         work,
         rest,
         cycles,
@@ -117,6 +126,8 @@ class TimetableState extends Equatable {
         dayForWork,
         timeForWork,
         notification,
+        countdownTimes,
+        namesOfActivity,
       ];
 
 

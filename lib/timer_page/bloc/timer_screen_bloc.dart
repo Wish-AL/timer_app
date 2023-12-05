@@ -11,12 +11,10 @@ part 'timer_screen_state.dart';
 class TimerBloc extends Bloc<TimerEvent, TimerState> {
   TimerBloc({
     required Ticker ticker,
-    required TimerRepository repository,
-    required int duration,
+    required this.countdownTimes,
+    required this.namesOfActivity,
   })  : _ticker = ticker,
-        _repository = repository,
-        //
-        super(TimerInitial(duration, 0)) {
+        super(TimerInitial(countdownTimes[0], 0)) {
     on<TimerStarted>(_onStarted);
     on<TimerPaused>(_onPaused);
     on<TimerResumed>(_onResumed);
@@ -24,11 +22,11 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
     on<_TimerTicked>(_onTicked);
   }
 
-  final TimerRepository _repository;
+
+  final List<int> countdownTimes;
+  final List<String> namesOfActivity;
   final Ticker _ticker;
   final int _duration = 10; //how to assign _repository.time[0];
-  final int iterationNumber =
-      3; //TODO replace 2 on = _repository.timeList.length;
   int iterationCounter = 0;
   StreamSubscription<int>? _tickerSubscription;
 
@@ -77,10 +75,10 @@ class TimerBloc extends Bloc<TimerEvent, TimerState> {
       emit(TimerRunInProgress(event.duration, event.actionStatus));
     } else {
       ++iterationCounter;
-      if (iterationCounter < iterationNumber) {
+      if (iterationCounter < countdownTimes.length) {
         emit(TimerRunInProgress(
-            _repository.time[iterationCounter], iterationCounter));
-        _runTicker(_repository.time[iterationCounter], iterationCounter);
+            countdownTimes[iterationCounter], iterationCounter));
+        _runTicker(countdownTimes[iterationCounter], iterationCounter);
       } else {
         emit(const TimerRunComplete());
       }

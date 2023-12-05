@@ -17,6 +17,6 @@ class MainPageState extends Equatable {
   }
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [mainPageData, searchData];
+
+  List<Object?> get props => [mainPageData, searchData,];
 }

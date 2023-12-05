@@ -5,7 +5,7 @@ part 'timer_data.g.dart';
 @collection
 class TimerData {
   Id id = Isar.autoIncrement;
-  int? preparing;//preparation!!!
+  int? preparation;//preparation!!!
   int? work;
   int? rest;
   int? cycles;
